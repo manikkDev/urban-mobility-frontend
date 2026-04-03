@@ -1,0 +1,146 @@
+.schemes-directory {
+  padding: 32px 0;
+}
+
+.page-subtitle {
+  color: #6b7280;
+  margin-bottom: 28px;
+  font-size: 18px;
+}
+
+.filters-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.filters-bar .search-input {
+  flex: 2;
+  min-width: 200px;
+}
+
+.filters-bar .form-select {
+  flex: 1;
+  min-width: 160px;
+}
+
+.schemes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.scheme-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid transparent;
+}
+
+.scheme-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.scheme-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mismatch-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.scheme-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.scheme-area {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.scheme-summary {
+  font-size: 15px;
+  color: #475569;
+  margin-bottom: 14px;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.scheme-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.category-tag {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.report-count {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.scheme-official-status {
+  font-size: 13px;
+  color: #94a3b8;
+  text-transform: capitalize;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+@media (max-width: 768px) {
+  .schemes-grid {
+    grid-template-columns: 1fr;
+  }
+  .filters-bar {
+    flex-direction: column;
+  }
+  .filters-bar .search-input,
+  .filters-bar .form-select {
+    width: 100%;
+  }
+}
