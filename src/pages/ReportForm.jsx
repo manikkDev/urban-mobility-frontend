@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getSchemes } from '../api/stationApi';
-import { submitReport } from '../api/feedbackApi';
+import { getRailwaySchemes } from '../api/stationApi';
+import { submitRailwayReport } from '../api/feedbackApi';
 import './ReportForm.css';
 
 const ISSUE_TYPES = [
-  { value: 'broken_escalator', label: 'Broken Escalator' },
-  { value: 'lift_not_working', label: 'Lift Not Working' },
-  { value: 'damaged_ramp', label: 'Damaged Ramp' },
-  { value: 'inaccessible_road', label: 'Inaccessible Road' },
-  { value: 'blocked_footpath', label: 'Blocked Footpath' },
+  { value: 'broken_escalator', label: 'Broken Railway Escalator' },
+  { value: 'lift_not_working', label: 'Railway Lift Not Working' },
+  { value: 'damaged_ramp', label: 'Damaged Railway Ramp' },
+  { value: 'inaccessible_platform', label: 'Inaccessible Railway Platform' },
+  { value: 'blocked_wheelchair_access', label: 'Blocked Wheelchair Access' },
   { value: 'missing_tactile_path', label: 'Missing Tactile Path' },
-  { value: 'unsafe_crossing', label: 'Unsafe Crossing' },
+  { value: 'unsafe_foot_over_bridge', label: 'Unsafe Foot Over Bridge' },
+  { value: 'assistance_counter_unavailable', label: 'Assistance Counter Unavailable' },
   { value: 'signage_missing', label: 'Signage Missing' },
   { value: 'scheme_not_started', label: 'Scheme Not Started' },
   { value: 'partial_implementation', label: 'Partial Implementation' },
   { value: 'ignored_by_officials', label: 'Ignored by Officials' },
   { value: 'scheme_non_functional', label: 'Scheme Non-Functional' },
-  { value: 'other', label: 'Other' },
+  { value: 'other', label: 'Other Railway Issue' },
 ];
 
 const SCHEME_CONDITIONS = [
@@ -54,7 +55,7 @@ const ReportForm = () => {
 
   const fetchSchemes = async () => {
     try {
-      const response = await getSchemes();
+      const response = await getRailwaySchemes();
       if (response.success) {
         setSchemes(response.data);
       }
@@ -113,9 +114,9 @@ const ReportForm = () => {
         ignoredByOfficials: formData.ignoredByOfficials,
       };
 
-      const response = await submitReport(payload);
+      const response = await submitRailwayReport(payload);
       if (response.success) {
-        setSuccess('Thank you! Your report has been submitted and will help improve accessibility.');
+        setSuccess('Thank you! Your railway accessibility report has been submitted and will help improve railway accessibility.');
         setFormData({
           schemeId: '',
           issueType: '',

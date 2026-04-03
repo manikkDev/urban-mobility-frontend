@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getIssues } from '../api/feedbackApi';
+import { getRailwayIssues } from '../api/feedbackApi';
 import './IssueFeed.css';
 
 const STATUS_COLOR_HEX = {
@@ -28,12 +28,13 @@ const CONDITION_LABELS = {
 
 const ISSUE_CATEGORY_LABELS = {
   equipment_failure: 'Equipment Failure',
-  road_access: 'Road Access',
+  platform_access_problem: 'Platform Access Problem',
   pathway_blockage: 'Pathway Blockage',
   partial_implementation: 'Partial Implementation',
   official_neglect: 'Official Neglect',
   safety_risk: 'Safety Risk',
   signage_problem: 'Signage Problem',
+  assistance_unavailable: 'Assistance Unavailable',
   other: 'Other',
 };
 
@@ -51,12 +52,12 @@ const IssueFeed = () => {
   const fetchIssues = async () => {
     try {
       setLoading(true);
-      const response = await getIssues();
+      const response = await getRailwayIssues();
       if (response.success) {
         setIssues(response.data);
       }
     } catch (err) {
-      setError('Failed to load issues. Please try again.');
+      setError('Failed to load railway issues. Please try again.');
     } finally {
       setLoading(false);
     }

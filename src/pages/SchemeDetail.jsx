@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getSchemeById } from '../api/stationApi';
+import { getRailwaySchemeById } from '../api/stationApi';
 import './SchemeDetail.css';
 
 const STATUS_COLOR_HEX = {
@@ -39,12 +39,12 @@ const SchemeDetail = () => {
   const fetchScheme = async () => {
     try {
       setLoading(true);
-      const response = await getSchemeById(id);
+      const response = await getRailwaySchemeById(id);
       if (response.success) {
         setData(response.data);
       }
     } catch (err) {
-      setError('Failed to load scheme details.');
+      setError('Failed to load railway scheme details.');
     } finally {
       setLoading(false);
     }

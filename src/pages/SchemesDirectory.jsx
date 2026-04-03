@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getSchemes } from '../api/stationApi';
+import { getRailwaySchemes } from '../api/stationApi';
 import './SchemesDirectory.css';
 
 const STATUS_COLOR_HEX = {
@@ -19,16 +19,16 @@ const STATUS_LABELS = {
 };
 
 const CATEGORY_LABELS = {
-  escalator_access: 'Escalator Access',
-  lift_access: 'Lift Access',
-  ramp_access: 'Ramp Access',
-  accessible_road: 'Accessible Road',
-  footpath_access: 'Footpath Access',
+  lift_access: 'Railway Lift Access',
+  escalator_access: 'Railway Escalator Access',
+  ramp_access: 'Railway Ramp Access',
+  platform_access: 'Platform Access',
+  foot_over_bridge_access: 'FOB Access',
   tactile_navigation: 'Tactile Navigation',
-  pedestrian_crossing: 'Pedestrian Crossing',
-  public_toilet_access: 'Public Toilet Access',
-  public_entry_access: 'Public Entry Access',
-  mixed_accessibility: 'Mixed Accessibility',
+  wheelchair_support: 'Wheelchair Support',
+  disability_assistance: 'Disability Assistance',
+  accessible_toilet_access: 'Accessible Toilets',
+  station_entry_access: 'Station Entry Access',
 };
 
 const SchemesDirectory = () => {
@@ -46,7 +46,7 @@ const SchemesDirectory = () => {
   const fetchSchemes = async () => {
     try {
       setLoading(true);
-      const response = await getSchemes();
+      const response = await getRailwaySchemes();
       if (response.success) {
         setSchemes(response.data);
       }

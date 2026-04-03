@@ -1,11 +1,11 @@
 import apiClient from './axiosConfig';
 
-export const submitReport = async (reportData) => {
-  const response = await apiClient.post('/reports', reportData);
+export const submitRailwayReport = async (reportData) => {
+  const response = await apiClient.post('/railway-reports', reportData);
   return response.data;
 };
 
-export const getIssues = async (params = {}) => {
-  const response = await apiClient.get('/issues', { params });
+export const getRailwayIssues = async (params = {}) => {
+  const response = await apiClient.get('/railway-issues', { params });
   return response.data;
 };
