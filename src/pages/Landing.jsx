@@ -7,7 +7,7 @@ const Landing = () => {
     <div className="landing-page">
       <div className="container">
         <div className="hero-section">
-          <h1 className="hero-title">Railway Disability Scheme Tracking & Accessibility Platform</h1>
+          <h1 className="hero-title">Urban Mobility - Railway Disability Scheme Tracking Platform</h1>
           <p className="hero-subtitle">
             Track railway disability schemes. Report live station issues. Hold railway authorities accountable.
           </p>

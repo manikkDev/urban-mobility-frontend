@@ -16,8 +16,8 @@ const Navbar = () => {
       <div className="container">
         <div className="navbar-content">
           <Link to="/" className="navbar-brand" onClick={() => setMenuOpen(false)}>
-            <span className="brand-icon">&#128646;</span>
-            <span className="brand-text">Railway Accessibility</span>
+            <span className="brand-icon">&#9855;</span>
+            <span className="brand-text">Urban Mobility</span>
           </Link>
           <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             &#9776;
