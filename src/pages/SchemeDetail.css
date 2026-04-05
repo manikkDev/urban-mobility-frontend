@@ -47,15 +47,37 @@
   text-transform: capitalize;
 }
 
+.mismatch-badge-large {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
 .detail-area {
   color: #64748b;
   font-size: 16px;
   margin-bottom: 4px;
 }
 
+.detail-division {
+  color: #94a3b8;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
 .detail-authority {
   color: #94a3b8;
   font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.last-reported {
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .detail-body {
@@ -183,6 +205,24 @@
   border-radius: 12px;
 }
 
+.mismatch-tag {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.ignored-tag {
+  background: #fefce8;
+  color: #a16207;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
 .severity-badge {
   background: #f8fafc;
   color: #475569;
@@ -240,7 +280,59 @@
 }
 
 .stat-row strong {
+  font-size: 24px;
   color: #1e293b;
+}
+
+/* Loading and Error States */
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: #6b7280;
+  font-size: 16px;
+  margin: 0;
+}
+
+.error-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.error-state h3 {
+  color: #dc2626;
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.error-state p {
+  color: #6b7280;
+  margin-bottom: 24px;
+  font-size: 16px;
 }
 
 @media (max-width: 900px) {

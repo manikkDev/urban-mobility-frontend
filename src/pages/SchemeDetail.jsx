@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getRailwaySchemeById } from '../api/stationApi';
+import { getRailwaySchemeById } from '../api/railwaySchemeApi';
 import './SchemeDetail.css';
 
 const STATUS_COLOR_HEX = {
@@ -51,16 +51,30 @@ const SchemeDetail = () => {
   };
 
   if (loading) {
-    return <div className="container"><div className="loading">Loading scheme details...</div></div>;
+    return (
+      <div className="scheme-detail">
+        <div className="container">
+          <Link to="/schemes" className="back-link">&larr; Back to Railway Schemes</Link>
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading railway scheme details...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error || !data) {
     return (
-      <div className="container">
-        <div className="empty-state">
-          <h3>Error</h3>
-          <p>{error || 'Scheme not found'}</p>
-          <Link to="/schemes" className="btn btn-primary">Back to Schemes</Link>
+      <div className="scheme-detail">
+        <div className="container">
+          <Link to="/schemes" className="back-link">&larr; Back to Railway Schemes</Link>
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h3>Railway Scheme Not Found</h3>
+            <p>{error || 'The requested railway scheme could not be found.'}</p>
+            <Link to="/schemes" className="btn btn-primary">Browse All Railway Schemes</Link>
+          </div>
         </div>
       </div>
     );
@@ -68,10 +82,26 @@ const SchemeDetail = () => {
 
   const { scheme, recentReports, analytics } = data;
 
+  const getTimeAgo = (dateString) => {
+    if (!dateString) return '';
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
   return (
     <div className="scheme-detail">
       <div className="container">
-        <Link to="/schemes" className="back-link">&larr; Back to Schemes</Link>
+        <Link to="/schemes" className="back-link">&larr; Back to Railway Schemes</Link>
 
         <div className="detail-header">
           <div className="detail-status-row">
@@ -84,10 +114,15 @@ const SchemeDetail = () => {
             {scheme.officialStatus && (
               <span className="official-badge">Official: {scheme.officialStatus.replace('_', ' ')}</span>
             )}
+            {scheme.officialClaimMismatch && <span className="mismatch-badge-large">Official Mismatch</span>}
           </div>
           <h1>{scheme.title}</h1>
-          <p className="detail-area">{scheme.areaName}</p>
+          <p className="detail-area">🚉 {scheme.stationName || scheme.areaName}</p>
+          {scheme.divisionName && <p className="detail-division">Division: {scheme.divisionName}</p>}
           <p className="detail-authority">Authority: {scheme.authorityName}</p>
+          {scheme.lastReportedAt && (
+            <p className="last-reported">Last reported: {getTimeAgo(scheme.lastReportedAt)}</p>
+          )}
         </div>
 
         <div className="detail-body">
@@ -132,16 +167,16 @@ const SchemeDetail = () => {
                 </div>
                 {scheme.officialStatus === 'completed' && (scheme.publicStatus === 'not_working' || scheme.publicStatus === 'ignored') && (
                   <div className="mismatch-alert">
-                    Officials claim this scheme is completed, but citizen reports indicate it is {STATUS_LABELS[scheme.publicStatus]?.toLowerCase()}.
+                    ⚠️ Railway officials claim this scheme is completed, but passenger reports indicate it is {STATUS_LABELS[scheme.publicStatus]?.toLowerCase()}.
                   </div>
                 )}
               </div>
             </div>
 
             <div className="card">
-              <h2>Recent Reports ({recentReports?.length || 0})</h2>
+              <h2>Recent Railway Reports ({recentReports?.length || 0})</h2>
               {(!recentReports || recentReports.length === 0) ? (
-                <p className="no-reports">No reports yet. Be the first to report.</p>
+                <p className="no-reports">No passenger reports yet. Be the first to report a railway accessibility issue.</p>
               ) : (
                 <div className="reports-list">
                   {recentReports.map((report) => (
@@ -159,20 +194,22 @@ const SchemeDetail = () => {
                           {CONDITION_LABELS[report.schemeCondition] || report.schemeCondition}
                         </span>
                         <span className="severity-badge">Severity: {report.severity}/5</span>
-                        {report.officialClaimMismatch && <span className="mismatch-tag">Mismatch</span>}
+                        {report.officialClaimMismatch && <span className="mismatch-tag">Official Mismatch</span>}
+                        {report.ignoredByOfficials && <span className="ignored-tag">Ignored</span>}
                       </div>
                       <p className="report-description">{report.description}</p>
                       <div className="report-meta">
-                        {report.locationLabel && <span>Location: {report.locationLabel}</span>}
+                        {report.stationName && <span>🚉 {report.stationName}</span>}
+                        {report.locationLabel && <span>📍 {report.locationLabel}</span>}
                         <span>{report.issueType?.replace(/_/g, ' ')}</span>
-                        <span>{new Date(report.createdAt).toLocaleDateString()}</span>
+                        <span className="time-ago">🕐 {getTimeAgo(report.createdAt)}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
               <Link to={`/report?schemeId=${scheme.id}`} className="btn btn-primary" style={{ marginTop: '16px' }}>
-                Report an Issue for This Scheme
+                Report Railway Issue for This Scheme
               </Link>
             </div>
           </div>

@@ -104,9 +104,11 @@
 
 .scheme-card-footer {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
   align-items: center;
   margin-bottom: 8px;
+  font-size: 12px;
 }
 
 .category-tag {
@@ -116,6 +118,21 @@
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 6px;
+}
+
+.open-issues {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.last-updated {
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .report-count {
@@ -128,6 +145,90 @@
   font-size: 13px;
   color: #94a3b8;
   text-transform: capitalize;
+}
+
+/* Loading and Error States */
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: #6b7280;
+  font-size: 16px;
+  margin: 0;
+}
+
+.error-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.error-state h3 {
+  color: #dc2626;
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.error-state p {
+  color: #6b7280;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: #374151;
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.empty-state p {
+  color: #6b7280;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.results-count {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
   padding-top: 8px;
   border-top: 1px solid #f1f5f9;
 }

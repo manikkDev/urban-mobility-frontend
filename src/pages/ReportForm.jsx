@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getRailwaySchemes } from '../api/stationApi';
-import { submitRailwayReport } from '../api/feedbackApi';
+import { getRailwaySchemes } from '../api/railwaySchemeApi';
+import { submitRailwayReport } from '../api/railwayReportApi';
 import './ReportForm.css';
 
 const ISSUE_TYPES = [
@@ -144,23 +144,31 @@ const ReportForm = () => {
   return (
     <div className="report-page">
       <div className="container">
-        <h1>Report an Accessibility Issue</h1>
+        <h1>Report Railway Accessibility Issue</h1>
         <p className="page-subtitle">
-          Help us track the real status of accessibility schemes. Your report makes a difference.
+          Help us track the real status of railway schemes at stations. Your report makes a difference.
         </p>
 
         {success && (
           <div className="success-box">
+            <div className="success-icon">✅</div>
+            <h3>Report Submitted Successfully!</h3>
             <p>{success}</p>
-            <button className="btn btn-primary" onClick={() => navigate('/schemes')} style={{ marginTop: '12px' }}>
-              View Schemes
-            </button>
+            <div className="success-actions">
+              <button className="btn btn-primary" onClick={() => navigate('/schemes')}>
+                View Railway Schemes
+              </button>
+              <button className="btn btn-secondary" onClick={() => navigate('/issues')}>
+                View Live Issue Feed
+              </button>
+            </div>
           </div>
         )}
 
         {errors.length > 0 && (
           <div className="error-box">
-            <strong>Please fix the following:</strong>
+            <div className="error-icon-small">⚠️</div>
+            <strong>Please fix the following issues:</strong>
             <ul>
               {errors.map((err, i) => (
                 <li key={i}>{err}</li>
@@ -181,10 +189,10 @@ const ReportForm = () => {
                 value={formData.schemeId}
                 onChange={handleChange}
               >
-                <option value="">-- Choose a scheme --</option>
+                <option value="">-- Choose a railway scheme --</option>
                 {schemes.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.title} ({s.areaName})
+                    {s.title} ({s.stationName || s.areaName})
                   </option>
                 ))}
               </select>

@@ -1,8 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getRailwayIssues } from '../api/railwayReportApi';
 import './Landing.css';
 
 const Landing = () => {
+  const [latestIssues, setLatestIssues] = useState([]);
+  const [loadingIssues, setLoadingIssues] = useState(true);
+
+  useEffect(() => {
+    fetchLatestIssues();
+  }, []);
+
+  const fetchLatestIssues = async () => {
+    try {
+      setLoadingIssues(true);
+      const data = await getRailwayIssues();
+      // Get 3 most recent issues for homepage preview
+      setLatestIssues(data.slice(0, 3));
+    } catch (err) {
+      console.error('Failed to load latest issues:', err);
+    } finally {
+      setLoadingIssues(false);
+    }
+  };
+
+  const getTimeAgo = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
   return (
     <div className="landing-page">
       <div className="container">
@@ -46,6 +82,42 @@ const Landing = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="latest-issues-section">
+          <div className="section-header">
+            <h2>Latest Railway Issues Reported</h2>
+            <Link to="/issues" className="view-all-link">View All Issues →</Link>
+          </div>
+          {loadingIssues ? (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <p>Loading latest railway issues...</p>
+            </div>
+          ) : latestIssues.length === 0 ? (
+            <div className="empty-state-inline">
+              <p>No railway issues reported yet. Be the first to report an accessibility issue.</p>
+            </div>
+          ) : (
+            <div className="issues-preview">
+              {latestIssues.map((issue) => (
+                <div key={issue.id} className="issue-preview-card">
+                  <div className="issue-preview-header">
+                    <Link to={`/schemes/${issue.schemeId}`} className="issue-scheme-name">
+                      {issue.schemeTitle || 'Railway Scheme'}
+                    </Link>
+                    <span className="issue-time">{getTimeAgo(issue.createdAt)}</span>
+                  </div>
+                  <p className="issue-preview-description">{issue.description}</p>
+                  <div className="issue-preview-meta">
+                    {issue.stationName && <span className="meta-item">🚉 {issue.stationName}</span>}
+                    <span className="meta-item">Severity: {issue.severity}/5</span>
+                    {issue.issueType && <span className="meta-item">{issue.issueType.replace(/_/g, ' ')}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="score-info-section">

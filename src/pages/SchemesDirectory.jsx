@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getRailwaySchemes } from '../api/stationApi';
+import { getRailwaySchemes } from '../api/railwaySchemeApi';
 import './SchemesDirectory.css';
 
 const STATUS_COLOR_HEX = {
@@ -69,35 +69,58 @@ const SchemesDirectory = () => {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading">Loading schemes...</div>
+      <div className="schemes-directory">
+        <div className="container">
+          <h1>Railway Disability Schemes</h1>
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading railway schemes...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container">
-        <div className="empty-state">
-          <h3>Error</h3>
-          <p>{error}</p>
-          <button className="btn btn-primary" onClick={fetchSchemes}>Try Again</button>
+      <div className="schemes-directory">
+        <div className="container">
+          <h1>Railway Disability Schemes</h1>
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h3>Unable to Load Schemes</h3>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={fetchSchemes}>Try Again</button>
+          </div>
         </div>
       </div>
     );
   }
 
+  const getTimeAgo = (dateString) => {
+    if (!dateString) return '';
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffHours < 24) return `Updated ${diffHours}h ago`;
+    if (diffDays < 7) return `Updated ${diffDays}d ago`;
+    return `Updated ${date.toLocaleDateString()}`;
+  };
+
   return (
     <div className="schemes-directory">
       <div className="container">
-        <h1>Accessibility Schemes</h1>
-        <p className="page-subtitle">Browse, search, and check the real status of government accessibility schemes</p>
+        <h1>Railway Disability Schemes</h1>
+        <p className="page-subtitle">Browse railway accessibility schemes and check real ground status at stations</p>
 
         <div className="filters-bar">
           <input
             type="text"
             className="form-input search-input"
-            placeholder="Search by name, area, or keyword..."
+            placeholder="Search by scheme name, station, or keyword..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -115,10 +138,16 @@ const SchemesDirectory = () => {
           </select>
         </div>
 
+        <p className="results-count">{filtered.length} railway scheme{filtered.length !== 1 ? 's' : ''} found</p>
+
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <h3>No schemes found</h3>
-            <p>Try adjusting your search or filters</p>
+            <div className="empty-icon">🔍</div>
+            <h3>No Railway Schemes Found</h3>
+            <p>No schemes match your current search or filter criteria.</p>
+            <button className="btn btn-secondary" onClick={() => { setSearch(''); setCategoryFilter(''); setStatusFilter(''); }}>
+              Clear All Filters
+            </button>
           </div>
         ) : (
           <div className="schemes-grid">
@@ -130,14 +159,16 @@ const SchemesDirectory = () => {
                     style={{ backgroundColor: STATUS_COLOR_HEX[scheme.statusColor] || '#6b7280' }}
                   />
                   <span className="status-label">{STATUS_LABELS[scheme.publicStatus] || 'Unknown'}</span>
-                  {scheme.officialClaimMismatch && <span className="mismatch-badge">Mismatch</span>}
+                  {scheme.officialClaimMismatch && <span className="mismatch-badge">Official Mismatch</span>}
                 </div>
                 <h3 className="scheme-title">{scheme.title}</h3>
-                <p className="scheme-area">{scheme.areaName}</p>
+                <p className="scheme-area">🚉 {scheme.stationName || scheme.areaName}</p>
                 <p className="scheme-summary">{scheme.summary}</p>
                 <div className="scheme-card-footer">
                   <span className="category-tag">{CATEGORY_LABELS[scheme.category] || scheme.category}</span>
                   <span className="report-count">{scheme.reportCount || 0} reports</span>
+                  {scheme.openIssueCount > 0 && <span className="open-issues">{scheme.openIssueCount} open</span>}
+                  {scheme.lastReportedAt && <span className="last-updated">{getTimeAgo(scheme.lastReportedAt)}</span>}
                 </div>
                 <div className="scheme-official-status">
                   Official: <strong>{scheme.officialStatus?.replace('_', ' ')}</strong>
