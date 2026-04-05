@@ -58,9 +58,9 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      await signup(formData.email, formData.password, formData.fullName, formData.role);
-      // Navigate based on role
-      if (formData.role === 'admin') {
+      const { profile } = await signup(formData.email, formData.password, formData.fullName, formData.role);
+      // Navigate based on actual profile role from backend
+      if (profile?.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/profile');

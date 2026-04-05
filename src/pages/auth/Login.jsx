@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import apiClient from '../../api/axiosConfig';
 import './Auth.css';
 
 const Login = () => {
@@ -41,8 +42,22 @@ const Login = () => {
 
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/profile');
+      const userCredential = await login(formData.email, formData.password);
+      const token = await userCredential.user.getIdToken();
+      
+      // Fetch user profile to determine role
+      const profileResponse = await apiClient.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const userRole = profileResponse.data.data.role;
+      
+      // Navigate based on actual role
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/profile');
+      }
     } catch (error) {
       console.error('Login error:', error);
       

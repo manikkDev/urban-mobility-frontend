@@ -14,8 +14,15 @@ const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setMenuOpen(false);
+    const confirmed = window.confirm('Are you sure you want to log out?');
+    if (!confirmed) return;
+    
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (

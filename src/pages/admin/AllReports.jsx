@@ -13,6 +13,9 @@ const AllReports = () => {
     severity: '',
     issueCategory: ''
   });
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     fetchAllReports();
@@ -107,6 +110,55 @@ const AllReports = () => {
     if (severity >= 4) return '#dc2626';
     if (severity === 3) return '#f59e0b';
     return '#10b981';
+  };
+
+  const handleViewDetails = (report) => {
+    setSelectedReport(report);
+    setShowDetailModal(true);
+  };
+
+  const handleMarkUnderReview = async (reportId) => {
+    if (!window.confirm('Mark this report as under review?')) return;
+    
+    try {
+      setUpdating(true);
+      // In a real implementation, this would call an API endpoint
+      // For now, we'll update the local state
+      const updatedReports = reports.map(r => 
+        r.id === reportId ? { ...r, reviewStatus: 'under_review' } : r
+      );
+      setReports(updatedReports);
+      alert('Report marked as under review');
+    } catch (err) {
+      console.error('Failed to update report:', err);
+      alert('Failed to update report status');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleUpdateStatus = async (reportId, newStatus) => {
+    if (!window.confirm(`Change report status to "${newStatus.replace(/_/g, ' ')}"?`)) return;
+    
+    try {
+      setUpdating(true);
+      const updatedReports = reports.map(r => 
+        r.id === reportId ? { ...r, reviewStatus: newStatus } : r
+      );
+      setReports(updatedReports);
+      setShowDetailModal(false);
+      alert('Report status updated successfully');
+    } catch (err) {
+      console.error('Failed to update report:', err);
+      alert('Failed to update report status');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowDetailModal(false);
+    setSelectedReport(null);
   };
 
   if (loading) {
@@ -286,20 +338,140 @@ const AllReports = () => {
                 </div>
 
                 <div className="report-actions">
-                  <button className="btn btn-sm btn-primary">
-                    Review Report
-                  </button>
-                  <button className="btn btn-sm btn-secondary">
+                  <button 
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleViewDetails(report)}
+                    disabled={updating}
+                  >
                     View Details
                   </button>
                   {report.reviewStatus === 'new' && (
-                    <button className="btn btn-sm btn-warning">
+                    <button 
+                      className="btn btn-sm btn-warning"
+                      onClick={() => handleMarkUnderReview(report.id)}
+                      disabled={updating}
+                    >
                       Mark Under Review
                     </button>
                   )}
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Report Detail Modal */}
+        {showDetailModal && selectedReport && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Report Details</h2>
+                <button className="modal-close" onClick={closeModal}>×</button>
+              </div>
+              
+              <div className="modal-body">
+                <div className="detail-section">
+                  <h3>Report Information</h3>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <strong>Status:</strong>
+                      <span className={`status-badge ${getStatusBadgeClass(selectedReport.reviewStatus)}`}>
+                        {selectedReport.reviewStatus?.replace(/_/g, ' ') || 'New'}
+                      </span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Severity:</strong>
+                      <span style={{ color: getSeverityColor(selectedReport.severity), fontWeight: 600 }}>
+                        {selectedReport.severity}/5
+                      </span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Scheme ID:</strong>
+                      <span>{selectedReport.schemeId}</span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Station:</strong>
+                      <span>{selectedReport.stationName || 'N/A'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Issue Type:</strong>
+                      <span>{selectedReport.issueType?.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Category:</strong>
+                      <span>{selectedReport.issueCategory?.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Location:</strong>
+                      <span>{selectedReport.locationLabel || 'Not specified'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <strong>Submitted:</strong>
+                      <span>{new Date(selectedReport.createdAt).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="detail-section">
+                  <h3>Description</h3>
+                  <p className="report-description-full">{selectedReport.description}</p>
+                </div>
+
+                {selectedReport.submittedByName && (
+                  <div className="detail-section">
+                    <h3>Submitted By</h3>
+                    <p><strong>Name:</strong> {selectedReport.submittedByName}</p>
+                    <p><strong>Email:</strong> {selectedReport.submittedByEmail}</p>
+                    <p><strong>User ID:</strong> {selectedReport.submittedByUid}</p>
+                  </div>
+                )}
+
+                {!selectedReport.submittedByName && (
+                  <div className="detail-section">
+                    <p className="anonymous-notice">📝 This is an anonymous report</p>
+                  </div>
+                )}
+
+                <div className="detail-section">
+                  <h3>Update Status</h3>
+                  <div className="status-actions">
+                    <button 
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleUpdateStatus(selectedReport.id, 'under_review')}
+                      disabled={updating || selectedReport.reviewStatus === 'under_review'}
+                    >
+                      Mark Under Review
+                    </button>
+                    <button 
+                      className="btn btn-sm btn-primary"
+                      onClick={() => handleUpdateStatus(selectedReport.id, 'verified')}
+                      disabled={updating || selectedReport.reviewStatus === 'verified'}
+                    >
+                      Mark Verified
+                    </button>
+                    <button 
+                      className="btn btn-sm btn-warning"
+                      onClick={() => handleUpdateStatus(selectedReport.id, 'escalated')}
+                      disabled={updating || selectedReport.reviewStatus === 'escalated'}
+                    >
+                      Escalate
+                    </button>
+                    <button 
+                      className="btn btn-sm"
+                      style={{ background: '#10b981', color: 'white' }}
+                      onClick={() => handleUpdateStatus(selectedReport.id, 'resolved')}
+                      disabled={updating || selectedReport.reviewStatus === 'resolved'}
+                    >
+                      Mark Resolved
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+              </div>
+            </div>
           </div>
         )}
       </div>

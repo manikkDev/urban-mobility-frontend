@@ -24,11 +24,11 @@ const AppRoutes = () => {
       <Route path="/signup" element={<Signup />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       
-      {/* Protected Citizen Routes */}
+      {/* Protected Routes - Require Authentication (Any Role) */}
       <Route 
         path="/schemes" 
         element={
-          <ProtectedRoute requireCitizen={true}>
+          <ProtectedRoute>
             <SchemesDirectory />
           </ProtectedRoute>
         } 
@@ -36,7 +36,7 @@ const AppRoutes = () => {
       <Route 
         path="/schemes/:id" 
         element={
-          <ProtectedRoute requireCitizen={true}>
+          <ProtectedRoute>
             <SchemeDetail />
           </ProtectedRoute>
         } 
@@ -44,7 +44,7 @@ const AppRoutes = () => {
       <Route 
         path="/issues" 
         element={
-          <ProtectedRoute requireCitizen={true}>
+          <ProtectedRoute>
             <IssueFeed />
           </ProtectedRoute>
         } 
@@ -52,11 +52,13 @@ const AppRoutes = () => {
       <Route 
         path="/report" 
         element={
-          <ProtectedRoute requireCitizen={true}>
+          <ProtectedRoute>
             <ReportForm />
           </ProtectedRoute>
         } 
       />
+      
+      {/* Citizen-Only Routes */}
       <Route 
         path="/profile" 
         element={
@@ -66,7 +68,7 @@ const AppRoutes = () => {
         } 
       />
       
-      {/* Protected Admin Routes */}
+      {/* Admin-Only Routes */}
       <Route 
         path="/admin" 
         element={
@@ -80,14 +82,6 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute requireAdmin={true}>
             <AllReports />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/admin/schemes" 
-        element={
-          <ProtectedRoute requireAdmin={true}>
-            <SchemesDirectory />
           </ProtectedRoute>
         } 
       />

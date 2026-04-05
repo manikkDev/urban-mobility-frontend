@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import apiClient from '../../api/axiosConfig';
 import './Auth.css';
 
 const AdminLogin = () => {
@@ -10,7 +11,7 @@ const AdminLogin = () => {
   });
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { login, userProfile } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -41,19 +42,24 @@ const AdminLogin = () => {
 
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
+      const userCredential = await login(formData.email, formData.password);
+      const token = await userCredential.user.getIdToken();
       
-      // Wait a moment for userProfile to be fetched
-      setTimeout(() => {
-        // Check if user has admin role
-        if (userProfile?.role === 'admin') {
-          navigate('/admin');
-        } else {
-          setErrors(['Access denied. Admin privileges required.']);
-          // Optionally logout non-admin user
-        }
-      }, 1000);
+      // Fetch user profile to verify admin role
+      const profileResponse = await apiClient.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       
+      const userRole = profileResponse.data.data.role;
+      
+      // Check if user has admin role
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else {
+        setErrors(['Access denied. Admin privileges required.']);
+        setLoading(false);
+        return;
+      }
     } catch (error) {
       console.error('Login error:', error);
       

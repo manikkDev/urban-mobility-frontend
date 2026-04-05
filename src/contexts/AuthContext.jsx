@@ -29,6 +29,9 @@ export const AuthProvider = ({ children }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Get Firebase token
+    const token = await user.getIdToken();
+
     // Create user profile in Firestore via backend
     await apiClient.post('/auth/register-profile', {
       uid: user.uid,
@@ -37,7 +40,11 @@ export const AuthProvider = ({ children }) => {
       role
     });
 
-    return user;
+    // Immediately fetch the profile after creation
+    setAuthToken(token);
+    const profile = await fetchUserProfile(token);
+    
+    return { user, profile };
   };
 
   // Login function
