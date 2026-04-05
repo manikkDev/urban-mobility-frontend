@@ -91,8 +91,11 @@ const Signup = () => {
       <div className="container">
         <div className="auth-container">
           <div className="auth-header">
-            <h1>Create Citizen Account</h1>
-            <p>Sign up to report railway accessibility issues and track schemes</p>
+            <div className="auth-header-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            </div>
+            <h1>Create Your Account</h1>
+            <p>Join the movement for accessible railway stations</p>
           </div>
 
           {errors.length > 0 && (
