@@ -18,6 +18,29 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+.navbar-scrolled .brand-text {
+  color: var(--text-dark);
+  text-shadow: none;
+}
+
+.navbar-scrolled .nav-link {
+  color: var(--text-dark-secondary);
+}
+
+.navbar-scrolled .nav-link:hover {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.navbar-scrolled .nav-link.active {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.navbar-scrolled .menu-toggle span {
+  background: var(--text-dark);
+}
+
 .navbar-inner {
   max-width: 1280px;
   margin: 0 auto;
