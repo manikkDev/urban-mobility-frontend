@@ -44,19 +44,24 @@ const AdminLogin = () => {
     try {
       const userCredential = await login(formData.email, formData.password);
       const token = await userCredential.user.getIdToken();
-      
-      // Fetch user profile to verify admin role
-      const profileResponse = await apiClient.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const userRole = profileResponse.data.data.role;
-      
-      // Check if user has admin role
-      if (userRole === 'admin') {
-        navigate('/admin');
-      } else {
-        setErrors(['Access denied. Admin privileges required.']);
+
+      try {
+        const profileResponse = await apiClient.get('/auth/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const userRole = profileResponse.data.data.role;
+
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          setErrors(['Access denied. Admin privileges required.']);
+          setLoading(false);
+          return;
+        }
+      } catch (profileError) {
+        console.error('Profile fetch after admin login failed:', profileError);
+        setErrors(['Signed in successfully, but we could not verify admin access right now. Please try again.']);
         setLoading(false);
         return;
       }

@@ -44,18 +44,21 @@ const Login = () => {
     try {
       const userCredential = await login(formData.email, formData.password);
       const token = await userCredential.user.getIdToken();
-      
-      // Fetch user profile to determine role
-      const profileResponse = await apiClient.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const userRole = profileResponse.data.data.role;
-      
-      // Navigate based on actual role
-      if (userRole === 'admin') {
-        navigate('/admin');
-      } else {
+
+      try {
+        const profileResponse = await apiClient.get('/auth/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const userRole = profileResponse.data.data.role;
+
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
+      } catch (profileError) {
+        console.error('Profile fetch after login failed:', profileError);
         navigate('/profile');
       }
     } catch (error) {

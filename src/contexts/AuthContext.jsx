@@ -32,19 +32,34 @@ export const AuthProvider = ({ children }) => {
     // Get Firebase token
     const token = await user.getIdToken();
 
-    // Create user profile in Firestore via backend
-    await apiClient.post('/auth/register-profile', {
-      uid: user.uid,
-      email: user.email,
-      fullName,
-      role
-    });
-
-    // Immediately fetch the profile after creation
     setAuthToken(token);
+
+    try {
+      await apiClient.post('/auth/register-profile', {
+        uid: user.uid,
+        email: user.email,
+        fullName,
+        role
+      });
+    } catch (error) {
+      const existingProfile = await fetchUserProfile(token);
+
+      if (!existingProfile && error.response?.status !== 409) {
+        throw error;
+      }
+    }
+
     const profile = await fetchUserProfile(token);
     
-    return { user, profile };
+    return {
+      user,
+      profile: profile || {
+        uid: user.uid,
+        email: user.email,
+        fullName,
+        role
+      }
+    };
   };
 
   // Login function
